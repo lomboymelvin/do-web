@@ -1,6 +1,8 @@
 // Dō offline helper (web version). Keeps Dō's own files on the device so it opens without a connection.
 // It only ever stores Dō's files — your jobs live in the browser's database, never here, and nothing is sent anywhere.
-const CACHE = 'do-1791126172520';
+const CACHE = 'do-1791301250819';
+// The screenshot reader (about 7 MB) is kept in its own cache, so updates to Dō don't download it again.
+const READER = 'reader-tesseract-1';
 const APP = ['./', 'index.html', 'app.js', 'app.css', 'manifest.webmanifest', 'LICENSE.txt',
   'fonts/poppins-regular.woff', 'fonts/poppins-medium.woff', 'fonts/poppins-bold.woff',
   'icons/icon-16.png', 'icons/icon-32.png', 'icons/icon-48.png', 'icons/icon-128.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/apple-touch-icon.png'];
@@ -18,6 +20,10 @@ self.addEventListener('fetch', (e) => {
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req).then((res) => { const copy = res.clone(); caches.open(CACHE).then((c) => c.put('index.html', copy)); return res; })
       .catch(() => caches.match('index.html')));
+    return;
+  }
+  if (new URL(req.url).pathname.includes('/ocr/')) {
+    e.respondWith(caches.open(READER).then((c) => c.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }))));
     return;
   }
   // Dō's files and guide pictures: from the device first, then the network (and kept for next time).
