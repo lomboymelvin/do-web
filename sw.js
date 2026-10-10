@@ -1,6 +1,6 @@
 // Dō offline helper (web version). Keeps Dō's own files on the device so it opens without a connection.
 // It only ever stores Dō's files — your jobs live in the browser's database, never here, and nothing is sent anywhere.
-const CACHE = 'do-1791645234587';
+const CACHE = 'do-1791646844757';
 // The screenshot reader (about 7 MB) is kept in its own cache, so updates to Dō don't download it again.
 const READER = 'reader-tesseract-1';
 const APP = ['./', 'index.html', 'app.js', 'app.css', 'manifest.webmanifest', 'LICENSE.txt',
